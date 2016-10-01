@@ -18,22 +18,22 @@ end
 
 Vagrant.configure(2) do |config|
   ##
-  ##  puppet4master
+  ##  puppet4ent
   ##
-  # The "puppet4master" string is the name of the box. hence you can do "vagrant up puppet4444master"
-  config.vm.define "puppet4master" do |puppet4master_config|
-    puppet4master_config.vm.box = "centos/7"
+  # The "puppet4ent" string is the name of the box. hence you can do "vagrant up puppet4444ent"
+  config.vm.define "puppet4ent" do |puppet4ent_config|
+    puppet4ent_config.vm.box = "centos/7"
 
     # this set's the machine's hostname.
-    puppet4master_config.vm.hostname = "puppetmaster.local"
+    puppet4ent_config.vm.hostname = "puppetent.local"
 
 
     # This will appear when you do "ip addr show". You can then access your guest machine's website using "http://192.168.60.4"
-    puppet4master_config.vm.network "private_network", ip: "192.168.60.100"
+    puppet4ent_config.vm.network "private_network", ip: "192.168.60.100"
     # note: this approach assigns a reserved internal ip addresses, which virtualbox's builtin router then reroutes the traffic to,
     #see: https://en.wikipedia.org/wiki/Private_network
 
-    puppet4master_config.vm.provider "virtualbox" do |vb|
+    puppet4ent_config.vm.provider "virtualbox" do |vb|
       # Display the VirtualBox GUI when booting the machine
       vb.gui = false
       # For common vm settings, e.g. setting ram and cpu we use:
@@ -42,34 +42,34 @@ Vagrant.configure(2) do |config|
       # However for more obscure virtualbox specific settings we fall back to virtualbox's "modifyvm" command:
       vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
       # name of machine that appears on the vb console and vb consoles title.
-      vb.name = "puppet4master"
+      vb.name = "puppet4ent"
     end
 
     config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
     config.vm.provision "file", source: "files/pe.conf", destination: "/pe.conf"
 
 
-    puppet4master_config.vm.provision "shell" do |s|
+    puppet4ent_config.vm.provision "shell" do |s|
       s.inline = '[ -f /vagrant/personal-data/.gitconfig ] && runuser -l vagrant -c "cp -f /vagrant/personal-data/.gitconfig ~"'
     end
 
     ## Copy the public+private keys from the host machine to the guest machine
-    puppet4master_config.vm.provision :host_shell do |host_shell|
+    puppet4ent_config.vm.provision :host_shell do |host_shell|
       host_shell.inline = "[ -f ${HOME}/.ssh/id_rsa ] && cp -f ${HOME}/.ssh/id_rsa* ./personal-data/"
     end
-    puppet4master_config.vm.provision "shell", path: "scripts/import-ssh-keys.sh"
+    puppet4ent_config.vm.provision "shell", path: "scripts/import-ssh-keys.sh"
 
-    puppet4master_config.vm.provision "shell", path: "scripts/install-puppet4master.sh"
-    puppet4master_config.vm.provision "shell", path: "scripts/update-git.sh"
-    puppet4master_config.vm.provision "shell", path: "scripts/install-vim-puppet-plugins.sh", privileged: false
+    puppet4ent_config.vm.provision "shell", path: "scripts/install-puppet4ent.sh"
+    puppet4ent_config.vm.provision "shell", path: "scripts/update-git.sh"
+    puppet4ent_config.vm.provision "shell", path: "scripts/install-vim-puppet-plugins.sh", privileged: false
     # for some reason I have to restart network, but this needs more investigation
-#    puppet4master_config.vm.provision "shell" do |remote_shell|
+#    puppet4ent_config.vm.provision "shell" do |remote_shell|
 #      remote_shell.inline = "systemctl restart network"
 #    end
 
     # this takes a vm snapshot (which we have called "basline") as the last step of "vagrant up".
-    puppet4master_config.vm.provision :host_shell do |host_shell|
-      host_shell.inline = 'vagrant snapshot take puppet4master baseline'
+    puppet4ent_config.vm.provision :host_shell do |host_shell|
+      host_shell.inline = 'vagrant snapshot take puppet4ent baseline'
     end
 
   end
@@ -109,13 +109,13 @@ Vagrant.configure(2) do |config|
   # it adds entry to the /etc/hosts file.
   # this block is placed outside the define blocks so that it gts applied to all VMs that are defined in this vagrantfile.
   config.vm.provision :hosts do |provisioner|
-    provisioner.add_host '192.168.60.100', ['puppetmaster', 'puppetmaster.local']
+    provisioner.add_host '192.168.60.100', ['puppetent', 'puppetent.local']
     provisioner.add_host '192.168.60.101', ['puppetagent01', 'puppetagent01.local']
     provisioner.add_host '192.168.60.102', ['puppetagent02', 'puppetagent02.local']
   end
 
   config.vm.provision :host_shell do |host_shell|
-    host_shell.inline = 'hostfile=/c/Windows/System32/drivers/etc/hosts && grep -q 192.168.60.100 $hostfile || echo "192.168.60.100   puppet4master puppet4master.local" >> $hostfile'
+    host_shell.inline = 'hostfile=/c/Windows/System32/drivers/etc/hosts && grep -q 192.168.60.100 $hostfile || echo "192.168.60.100   puppet4ent puppet4ent.local" >> $hostfile'
   end
 
   config.vm.provision :host_shell do |host_shell|
