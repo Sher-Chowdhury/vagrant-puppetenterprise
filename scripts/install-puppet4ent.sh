@@ -14,7 +14,7 @@ yum install -y htop
 yum install -y tree
 
 
-cd /root
+cd /tmp
 
 wget -O - https://downloads.puppetlabs.com/puppetlabs-gpg-signing-key.pub | gpg --import
 curl -L -o pe-latest.tgz 'https://pm.puppetlabs.com/cgi-bin/download.cgi?dist=el&rel=7&arch=x86_64&ver=latest'
@@ -23,11 +23,11 @@ tar -xf pe-latest.tgz
 
 wget https://gist.githubusercontent.com/Sher-Chowdhury/d402b0a1267cc6ae767b86b710ec4fe3/raw/86b0a4a78be833dc4eaf1a4c77fa4994b07945ef/pe.conf
 
-cd /root/puppet-enterprise*
+cd /tmp/puppet-enterprise*
 
 
 
-./puppet-enterprise-installer -c /root/pe.conf  > /root/pe-install-result.log
+./puppet-enterprise-installer -c /tmp/pe.conf  > /tmp/pe-install-result.log
 
 /opt/puppetlabs/bin/puppet agent -t
 /opt/puppetlabs/bin/puppet agent -t

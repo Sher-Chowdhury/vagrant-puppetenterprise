@@ -1,11 +1,15 @@
 #!/bin/bash
 
+echo '##########################################################################'
+echo '##### About to run import-ssh-keys.sh script #######################'
+echo '##########################################################################'
+
 runuser -l vagrant -c "cp -f /vagrant/personal-data/id_rsa* ~/.ssh"
 chmod 700 /home/vagrant/.ssh/id_rsa
 chmod 644 /home/vagrant/.ssh/id_rsa.pub
 
 
-# this disables RSA fingerprint checking when connecting to a new host. 
+# this disables RSA fingerprint checking when connecting to a new host.
 echo "
 Host *
     StrictHostKeyChecking no

@@ -46,12 +46,7 @@ Vagrant.configure(2) do |config|
     end
 
     config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
-    config.vm.provision "file", source: "files/pe.conf", destination: "/pe.conf"
-
-
-    puppet4ent_config.vm.provision "shell" do |s|
-      s.inline = '[ -f /vagrant/personal-data/.gitconfig ] && runuser -l vagrant -c "cp -f /vagrant/personal-data/.gitconfig ~"'
-    end
+    config.vm.provision "file", source: "files/pe.conf", destination: "/tmp/pe.conf"
 
     ## Copy the public+private keys from the host machine to the guest machine
     puppet4ent_config.vm.provision :host_shell do |host_shell|
@@ -115,14 +110,14 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision :host_shell do |host_shell|
-    host_shell.inline = 'hostfile=/c/Windows/System32/drivers/etc/hosts && grep -q 192.168.60.100 $hostfile || echo "192.168.60.100   puppet4ent puppet4ent.local" >> $hostfile'
+    host_shell.inline = 'hostfile=/etc/hosts && grep -q 192.168.60.100 $hostfile || echo "192.168.60.100   puppet4ent puppet4ent.local" >> $hostfile'
   end
 
   config.vm.provision :host_shell do |host_shell|
-    host_shell.inline = 'hostfile=/c/Windows/System32/drivers/etc/hosts && grep -q 192.168.60.101 $hostfile || echo "192.168.60.101   puppet4agent01 puppet4agent01.local" >> $hostfile'
+    host_shell.inline = 'hostfile=/etc/hosts && grep -q 192.168.60.101 $hostfile || echo "192.168.60.101   puppet4agent01 puppet4agent01.local" >> $hostfile'
   end
 
   config.vm.provision :host_shell do |host_shell|
-    host_shell.inline = 'hostfile=/c/Windows/System32/drivers/etc/hosts && grep -q 192.168.60.102 $hostfile || echo "192.168.60.102   puppet4agent02 puppet4agent02.local" >> $hostfile'
+    host_shell.inline = 'hostfile=/etc/hosts && grep -q 192.168.60.102 $hostfile || echo "192.168.60.102   puppet4agent02 puppet4agent02.local" >> $hostfile'
   end
 end
